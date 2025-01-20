@@ -1,0 +1,25 @@
+name: cache
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test-cache:
+    name: job to test the cache
+    runs-on: ubuntu-latets
+    steps: 
+      - uses: actions/checkout@v4.1.1
+      - uses: actions/cache@v3
+        id: generateCache
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - run: pip install -r requirements.text
+      - name: confirm cache
+        if: steps.generateCache.outputs.cache-hit == 'true'
+        run: echo cache entry found!
+  
+
